@@ -1,6 +1,7 @@
 /*
  * oled_driver.cpp - OLED (SSD1306) I2C驱动实现
  */
+#include <Wire.h>
 #include "oled_driver.h"
 
 static U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2_oled(U8G2_R0, U8X8_PIN_NONE);

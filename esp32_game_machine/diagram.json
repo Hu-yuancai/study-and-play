@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "author": "ESP32-S3 学习游戏一体机 - Wokwi仿真",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-s3-devkitc-1",
+      "id": "esp",
+      "top": 0,
+      "left": 0,
+      "attrs": {}
+    },
+    {
+      "type": "board-ssd1306",
+      "id": "lcd",
+      "top": -200,
+      "left": 300,
+      "attrs": { "i2cAddress": "0x3d" }
+    },
+    {
+      "type": "board-ssd1306",
+      "id": "oled",
+      "top": 0,
+      "left": 300,
+      "attrs": { "i2cAddress": "0x3c" }
+    },
+    {
+      "type": "wokwi-membrane-keypad",
+      "id": "kpd",
+      "top": 300,
+      "left": -200,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-buzzer",
+      "id": "bz",
+      "top": 300,
+      "left": 350,
+      "attrs": { "volume": "0.1" }
+    }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+
+    [ "esp:8",  "lcd:SDA", "green",  [ "h0" ] ],
+    [ "esp:9",  "lcd:SCL", "yellow", [ "h0" ] ],
+    [ "esp:3V3","lcd:VCC", "red",    [ "h0" ] ],
+    [ "esp:GND.1","lcd:GND","black", [ "h0" ] ],
+
+    [ "esp:8",  "oled:SDA","green",  [ "h0" ] ],
+    [ "esp:9",  "oled:SCL","yellow", [ "h0" ] ],
+    [ "esp:3V3","oled:VCC","red",    [ "h0" ] ],
+    [ "esp:GND.1","oled:GND","black",[ "h0" ] ],
+
+    [ "esp:1",  "kpd:R1", "violet", [ "h0" ] ],
+    [ "esp:2",  "kpd:R2", "violet", [ "h0" ] ],
+    [ "esp:41", "kpd:R3", "violet", [ "h0" ] ],
+    [ "esp:42", "kpd:R4", "violet", [ "h0" ] ],
+    [ "esp:39", "kpd:C1", "orange", [ "h0" ] ],
+    [ "esp:40", "kpd:C2", "orange", [ "h0" ] ],
+    [ "esp:47", "kpd:C3", "orange", [ "h0" ] ],
+    [ "esp:48", "kpd:C4", "orange", [ "h0" ] ],
+
+    [ "esp:5",     "bz:1", "purple",[ "h0" ] ],
+    [ "esp:GND.2", "bz:2", "black", [ "h0" ] ]
+  ]
+}

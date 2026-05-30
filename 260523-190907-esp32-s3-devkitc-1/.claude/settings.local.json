@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "PowerShell(pio run)",
+      "PowerShell(where.exe platformio 2>$null; if \\(-not $?\\) { Get-ChildItem \"$env:USERPROFILE\\\\.platformio\\\\penv\\\\Scripts\\\\platformio.exe\" -ErrorAction SilentlyContinue; Get-ChildItem \"C:\\\\.platformio\\\\penv\\\\Scripts\\\\platformio.exe\" -ErrorAction SilentlyContinue })",
+      "PowerShell(& \"C:\\\\.platformio\\\\penv\\\\Scripts\\\\platformio.exe\" run)",
+      "WebFetch(domain:registry.platformio.org)",
+      "WebFetch(domain:github.com)",
+      "PowerShell(pio pkg search olikraus/U8g2 --json 2>$null)"
+    ]
+  }
+}

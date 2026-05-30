@@ -1,0 +1,7 @@
+# Wokwi 仿真器配置
+# 默认指向 wokwi 编译环境的固件 (定义了 WOKWI_SIM 宏，用 SSD1306 替代 ST7920)
+
+[wokwi]
+version    = 1
+firmware   = '.pio/build/wokwi/firmware.bin'
+elf        = '.pio/build/wokwi/firmware.elf'
