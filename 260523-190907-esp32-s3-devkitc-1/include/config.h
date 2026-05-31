@@ -47,6 +47,7 @@
 #define KEY_6      13
 #define KEY_7      14
 #define KEY_8      15
+#define KEY_9      16   // 仅 Ghost Shell 内部引用
 
 // ========== 游戏参数 (ILI9341: 240x320 竖屏) ==========
 #define LCD_WIDTH   240

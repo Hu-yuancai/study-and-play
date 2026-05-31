@@ -18,10 +18,16 @@
 #define MAX_NOTES_ON_SCREEN 30
 #define NOTE_POOL_SIZE  300
 
-#define PERFECT_MS  72
-#define GOOD_MS     128
-#define BAD_MS      160
-#define SCROLL_SPEED 1.0f
+#define PERFECT_MS  120
+#define GOOD_MS     200
+#define BAD_MS      280
+
+// 音符从屏幕顶部(y=0)下落到判定线(y=JUDGE_LINE_Y)所需时间(ms)。
+// 关键: 音符在它的 tick 时刻"正好"落到判定线, 此时按键 = Perfect。
+// 由此推出每毫秒下落的像素数, 保证"判定线对齐得分时机"。
+// 调慢下落(原1500ms)→音符飞得更慢, 更容易看准按中。
+#define APPROACH_MS  2200.0f
+#define PX_PER_MS    ((float)JUDGE_LINE_Y / APPROACH_MS)
 
 #define MAX_SONGS 6
 
@@ -215,8 +221,9 @@ static void resetGame() {
 }
 
 static void loadActiveNotes(uint32_t now) {
+  // 提前 APPROACH_MS 加载, 使音符有完整下落过程(从顶部到判定线)
   while (game.nextLoadIdx < game.noteCount &&
-         game.pool[game.nextLoadIdx].tick <= now + 500) {
+         game.pool[game.nextLoadIdx].tick <= now + (uint32_t)APPROACH_MS) {
     if (game.activeCnt >= MAX_NOTES_ON_SCREEN) break;
     int idx = game.nextLoadIdx;
     int lane = game.pool[idx].lane;
@@ -232,11 +239,11 @@ static void loadActiveNotes(uint32_t now) {
 }
 
 static void updateNotesPosition(uint32_t now) {
+  int64_t gameTime = (int64_t)now - (int64_t)game.gameStartTime;
   for (int i = 0; i < game.activeCnt; ) {
     RuntimeNote& note = game.pool[game.active[i].poolIdx];
-    int64_t delta = (int64_t)now - (game.gameStartTime + note.tick);
-    if (delta < 0) delta = 0;
-    float yf = delta * SCROLL_SPEED;
+    // 音符在 tick 时刻正好落到判定线; 之前在上方, 之后继续下落
+    float yf = JUDGE_LINE_Y + (float)(gameTime - (int64_t)note.tick) * PX_PER_MS;
     if (yf > LCD_HEIGHT + NOTE_HEIGHT) {
       if (!note.active) {
         game.active[i] = game.active[--game.activeCnt];
@@ -250,6 +257,7 @@ static void updateNotesPosition(uint32_t now) {
       game.active[i] = game.active[--game.activeCnt];
       continue;
     }
+    if (yf < 0) yf = 0;
     game.active[i].y = (int)yf;
     i++;
   }
@@ -379,9 +387,11 @@ static void renderGame(uint32_t now) {
     if (note.type == 0) {
       lcdFillRect(x, y, LANE_WIDTH - 4, NOTE_HEIGHT, COLOR_WHITE);
     } else {
-      int endY = y + (int)(note.duration * SCROLL_SPEED);
-      if (endY > LCD_HEIGHT) endY = LCD_HEIGHT;
-      if (endY > y) lcdFillRect(x, y, LANE_WIDTH - 4, endY - y, 0x8410);
+      // 长按条: 头部在 y(按下点), 尾巴向上延伸 duration 对应的像素
+      int barLen = (int)(note.duration * PX_PER_MS);
+      int topY = y - barLen;
+      if (topY < 0) topY = 0;
+      if (y > topY) lcdFillRect(x, topY, LANE_WIDTH - 4, y - topY, 0x8410);
     }
   }
 
@@ -459,7 +469,8 @@ static void drawStartScreen() {
   lcdDrawString(15, 170, "1 2 3 4", 2);
   lcdSetTextColor(0x8410, COLOR_DARKBG);
   lcdDrawString(15, 220, "5/6:Change Song", 1);
-  lcdDrawString(15, 245, "ENTER:Start", 2);
+  lcdSetTextColor(COLOR_GOLD, COLOR_DARKBG);
+  lcdDrawString(15, 245, "Auto start 3s...", 2);
   lcdRefresh();
 }
 
@@ -467,7 +478,7 @@ static void drawStartScreen() {
 void pianoGameInit() {
   game.currentSong = 0;
   resetGame();
-  game.gameStartTime = millis() + 2000;
+  game.gameStartTime = millis() + 3000;
   game.lastOledUpdate = 0;
   stopTone();
   drawStartScreen();
@@ -485,14 +496,14 @@ void pianoGameLoop(uint8_t key) {
   if (key == KEY_5) {
     game.currentSong = (game.currentSong + 1) % MAX_SONGS;
     resetGame();
-    game.gameStartTime = millis() + 2000;
+    game.gameStartTime = millis() + 3000;
     drawStartScreen();
     return;
   }
   if (key == KEY_6) {
     game.currentSong = (game.currentSong - 1 + MAX_SONGS) % MAX_SONGS;
     resetGame();
-    game.gameStartTime = millis() + 2000;
+    game.gameStartTime = millis() + 3000;
     drawStartScreen();
     return;
   }

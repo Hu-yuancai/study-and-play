@@ -154,13 +154,17 @@ static void checkCollisions() {
   }
 }
 
-static void handleInput(uint8_t key) {
+// 离散按键事件: 单次移动一步 + 射击。每个按键事件立即处理, 不受帧率限制。
+static void handleKeyEvent(uint8_t key) {
   if (key == KEY_LEFT  && playerX > 0)                    playerX -= PLAYER_SPEED;
   if (key == KEY_RIGHT && playerX < LCD_WIDTH - PLAYER_W) playerX += PLAYER_SPEED;
   if (key == KEY_UP    && playerY > 0)                    playerY -= PLAYER_SPEED;
   if (key == KEY_DOWN  && playerY < LCD_HEIGHT - PLAYER_H) playerY += PLAYER_SPEED;
   if (key == KEY_FIRE || key == KEY_ENTER) fireBullet();
+}
 
+// 连续移动: 按住左右键时持续平移。放在帧率限制内, 速度才稳定。
+static void handleContinuousMove() {
   if (isKeyPressed(KEY_LEFT)  && playerX > 0)                    playerX -= 1;
   if (isKeyPressed(KEY_RIGHT) && playerX < LCD_WIDTH - PLAYER_W) playerX += 1;
 }
@@ -223,11 +227,14 @@ void planeGameLoop(uint8_t key) {
     return;
   }
 
+  // 按键事件每次都立即处理 (尤其射击), 不能被下面的帧率限制丢弃
+  handleKeyEvent(key);
+
   if (millis() - lastFrame < FRAME_MS) return;
   lastFrame = millis();
   frameCount++;
 
-  handleInput(key);
+  handleContinuousMove();
   updateBullets();
   updateEnemies();
   checkCollisions();

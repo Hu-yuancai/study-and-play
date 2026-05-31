@@ -32,6 +32,7 @@
 #define NOTE_REST 0
 
 void initAudio();
+void audioUpdate();   // 在主循环中每帧调用, 推进非阻塞音效
 void playTone(uint16_t frequency, uint16_t duration);
 void stopTone();
 void playNote(uint8_t noteIndex);

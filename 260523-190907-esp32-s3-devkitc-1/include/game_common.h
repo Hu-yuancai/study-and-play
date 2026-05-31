@@ -10,7 +10,12 @@ enum GameMode {
   MODE_MENU,
   MODE_PIANO,
   MODE_PLANE,
-  MODE_STUDY
+  MODE_MINESWEEPER,   // 扫雷游戏
+  MODE_SNAKE,         // 贪吃蛇
+  MODE_TETRIS,        // 俄罗斯方块
+  MODE_2048,          // 2048
+  MODE_STUDY,
+  MODE_SHELL          // Ghost Shell 隐藏调试终端 (Konami码进入)
 };
 
 extern GameMode currentMode;

@@ -78,3 +78,27 @@ bool isKeyPressed(uint8_t targetKey) {
   }
   return false;
 }
+
+// ===== 按键事件队列 (环形缓冲, 防漏键; 当前主循环未启用, 备用) =====
+static uint8_t keyQueue[KEY_QUEUE_SIZE];
+static volatile uint8_t keyQueueHead = 0;
+static volatile uint8_t keyQueueTail = 0;
+
+void keyQueuePush(uint8_t key) {
+  if (key == KEY_NONE) return;
+  uint8_t next = (keyQueueHead + 1) % KEY_QUEUE_SIZE;
+  if (next == keyQueueTail) return;  // 满则丢弃
+  keyQueue[keyQueueHead] = key;
+  keyQueueHead = next;
+}
+
+uint8_t keyQueuePop() {
+  if (keyQueueHead == keyQueueTail) return KEY_NONE;  // 空
+  uint8_t key = keyQueue[keyQueueTail];
+  keyQueueTail = (keyQueueTail + 1) % KEY_QUEUE_SIZE;
+  return key;
+}
+
+bool keyQueueAvailable() { return keyQueueHead != keyQueueTail; }
+
+void keyQueueFlush() { keyQueueHead = keyQueueTail = 0; }

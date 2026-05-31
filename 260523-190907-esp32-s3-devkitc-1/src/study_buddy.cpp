@@ -40,18 +40,14 @@ void studyBuddyInit() {
   oledShowBlinkingFace(FACE_STUDY_A, FACE_STUDY_B, 800);
 }
 
-static const uint16_t modeColors[4] = {COLOR_CYAN, COLOR_GREEN, COLOR_GOLD, COLOR_RED};
+static const uint16_t modeColors[4] = {COLOR_CYAN, COLOR_GREEN, COLOR_GOLD, COLOR_ORANGE};
 
 static void renderSelect() {
   lcdClear(COLOR_DARKBG);
-  // 标题栏
-  lcdFillRect(0, 0, LCD_WIDTH, 45, COLOR_NAVY);
-  lcdSetTextColor(COLOR_CYAN, COLOR_NAVY);
-  lcdDrawString(30, 8, "Study Buddy", 2);
-
-  // 副标题
-  lcdSetTextColor(0x8410, COLOR_DARKBG);
-  lcdDrawString(40, 65, "Select Timer", 1);
+  // 标题栏 (新配色: 浅薄荷绿底 + 深绿字)
+  lcdFillRect(0, 0, LCD_WIDTH, 45, 0xB7F7);
+  lcdSetTextColor(0x24A4, 0xB7F7);
+  lcdDrawString(30, 12, "Study Buddy", 2);
 
   // 四个时长选项
   for (int i = 0; i < modeCount; i++) {
@@ -77,9 +73,9 @@ static void renderSelect() {
 
 static void renderTimer() {
   lcdClear(COLOR_DARKBG);
-  // 标题栏
-  lcdFillRect(0, 0, LCD_WIDTH, 45, COLOR_NAVY);
-  lcdSetTextColor(COLOR_CYAN, COLOR_NAVY);
+  // 标题栏 (新配色: 浅薄荷绿底 + 深绿字)
+  lcdFillRect(0, 0, LCD_WIDTH, 45, 0xB7F7);
+  lcdSetTextColor(0x24A4, 0xB7F7);
   // 已过时间百分比
   int pct = (int)(100 - ((remainSeconds * 100) / totalSeconds));
   char titleBuf[24];
@@ -91,7 +87,7 @@ static void renderTimer() {
   int secs = remainSeconds % 60;
   char timeBuf[16];
   snprintf(timeBuf, sizeof(timeBuf), "%02d:%02d", mins, secs);
-  lcdSetTextColor(COLOR_WHITE, COLOR_DARKBG);
+  lcdSetTextColor(0xADEF, COLOR_DARKBG);   // 倒计时数字: 淡黄绿
   lcdDrawString(30, 100, timeBuf, 4);
 
   // 进度条
@@ -112,13 +108,13 @@ static void renderTimer() {
 
 static void renderDone() {
   lcdClear(COLOR_DARKBG);
-  // 标题
-  lcdFillRect(0, 0, LCD_WIDTH, 55, COLOR_NAVY);
-  lcdSetTextColor(COLOR_GOLD, COLOR_NAVY);
+  // 标题 (新配色: 绿底金字, 放大)
+  lcdFillRect(0, 0, LCD_WIDTH, 55, COLOR_GREEN);
+  lcdSetTextColor(COLOR_GOLD, COLOR_GREEN);
   lcdDrawString(20, 10, "Congratulations!", 2);
 
   // 完成信息
-  lcdSetTextColor(COLOR_WHITE, COLOR_DARKBG);
+  lcdSetTextColor(0xADEF, COLOR_DARKBG);
   char buf[32];
   snprintf(buf, sizeof(buf), "Session: %d min", (int)(totalSeconds / 60));
   lcdDrawString(40, 90, buf, 2);
